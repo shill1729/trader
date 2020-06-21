@@ -11,4 +11,8 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
 Imports: 
-    quantmod
+    KellyCriterion,
+    pside,
+    quantmod,
+    sde,
+    TA
