@@ -34,5 +34,7 @@ load_stocks <- function(tickers, call_rate = 60)
   }
   stocks <- do.call(cbind, args = lapply(stock_list, quantmod::Cl))
   stocks <- stocks[stats::complete.cases(stocks),]
+  # Replace 'ticker.Close' with just 'ticker'
+  names(stocks) <- gsub(".Close", "", names(stocks))
   return(stocks)
 }
