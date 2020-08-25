@@ -6,7 +6,7 @@
 #' @export load_stock
 load_stock <- function(ticker)
 {
-  s <- quantmod::getSymbols(Symbols = ticker,src = "av", auto.assign = FALSE, output.size = "full",  api.key = Sys.getenv("api.key"))
+  s <- quantmod::getSymbols(Symbols = ticker,src = "av", auto.assign = FALSE, output.size = "full",  api.key = Sys.getenv("premium_api_key"))
   return(s)
 }
 
@@ -24,9 +24,9 @@ load_stocks <- function(tickers, call_rate = 60)
   N <- length(tickers)
   for(i in 1:N)
   {
-    if(i%%5 == 0)
+    if(i %% 30 == 0)
     {
-      print("Free AV calls are limited, waiting...")
+      print("30 AV calls per minute limit, waiting...")
       Sys.sleep(call_rate)
     }
     print(tickers[i])

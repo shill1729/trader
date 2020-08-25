@@ -8,5 +8,6 @@
 #' @export arithmetic_return
 arithmetic_return <- function(s)
 {
-  diff(s)/(s[1:(length(s)-1)])
+  x <- diff(s)/(s[1:(length(s)-1)])
+  return(x[-1])
 }
