@@ -2,11 +2,12 @@
 #'
 #' @param ticker the stock ticker to load
 #'
+#' @description {Wrapper to quantmod's \code{getSymbols}.}
 #' @return see quantmod \code{getSymbols}
 #' @export load_stock
 load_stock <- function(ticker)
 {
-  s <- quantmod::getSymbols(Symbols = ticker,src = "av", auto.assign = FALSE, output.size = "full",  api.key = Sys.getenv("premium_api_key"))
+  s <- quantmod::getSymbols(Symbols = ticker, src = "av", auto.assign = FALSE, output.size = "full",  api.key = Sys.getenv("premium_api_key"), adjusted = TRUE)
   return(s)
 }
 

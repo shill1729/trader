@@ -1,6 +1,6 @@
 #' Count the number of jumps per period above a threshold
 #'
-#' @param close_prices the time-series of close prices
+#' @param prices the time-series of close prices
 #' @param jump_thresh the jump-threshold (positive)
 #' @param return_type the return type "log" or "arithmetic
 #' @param side the side of the jump: "up", "down" or "both"
@@ -9,15 +9,15 @@
 #' @description {Counts the number of jumps \eqn{X_n >= a} (and the other respective events) for some jump-threshold \eqn{a} for different periods}
 #' @return time-series of counts per period
 #' @export count_jumps
-count_jumps <- function(close_prices, jump_thresh = 0.01, return_type = "arithmetic", side = "down", period = "weekly")
+count_jumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", side = "down", period = "weekly")
 {
 
   if(return_type == "log")
   {
-    x <- diff(log(close_prices))[-1]
+    x <- log_return(prices)
   } else if(return_type == "arithmetic")
   {
-    x <- arithmetic_return(close_prices)
+    x <- arithmetic_return(prices)
 
   }
   indicator_up <- ifelse(x >= jump_thresh, 1, 0)

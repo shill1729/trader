@@ -7,8 +7,17 @@
 #' @export date_yte
 date_yte <- function(expiry)
 {
-  # as.Date has good enough error messages.
-  return(as.numeric(as.Date(expiry)-Sys.Date())/252)
+  # If a financial calendar is not available, create one
+  if(!bizdays::has.calendars("trading"))
+  {
+    bizdays::create.calendar(name = "trading",
+                             weekdays = c("saturday", "sunday"),
+                             financial = TRUE
+                             )
+    bizdays::bizdays.options$set(default.calendar = "trading")
+  }
+  time_diff <- bizdays::bizdays(from = Sys.Date(), to = as.Date(expiry), cal = "trading")/252
+  return(time_diff)
 }
 
 

@@ -13,5 +13,5 @@ load_stock(ticker)
 see quantmod \code{getSymbols}
 }
 \description{
-Load a single stock
+{Wrapper to quantmod's \code{getSymbols}.}
 }

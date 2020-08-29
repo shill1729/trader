@@ -8,6 +8,34 @@
 #' @export arithmetic_return
 arithmetic_return <- function(s)
 {
-  x <- diff(s)/(s[1:(length(s)-1)])
-  return(x[-1])
+  # x <- diff(s)[-1]
+  # r <- x
+  # for(i in 1:length(x))
+  # {
+  #   if(s[i] == 0)
+  #   {
+  #     msg <- paste("Zero price in historical data @ index: ", i)
+  #     stop(msg)
+  #   }
+  #   r[i] <- x[i]/s[i]
+  # }
+
+  # Just wrap to quantmod
+  r <- quantmod::periodReturn(x = s, period = "daily", type = "arithmetic")
+  r <- r[-1]
+  names(r) <- names(s)
+  return(r)
+}
+
+
+#' Daily log-returns
+#'
+#' @param prices the time-series of (adjusted close) prices
+#'
+#' @description {Returns the daily log returns of a price series}
+#' @return numeric
+#' @export log_return
+log_return <- function(prices)
+{
+  return(diff(log(prices))[-1])
 }

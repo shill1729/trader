@@ -5,7 +5,7 @@
 \title{Count the number of jumps per period above a threshold}
 \usage{
 count_jumps(
-  close_prices,
+  prices,
   jump_thresh = 0.01,
   return_type = "arithmetic",
   side = "down",
@@ -13,7 +13,7 @@ count_jumps(
 )
 }
 \arguments{
-\item{close_prices}{the time-series of close prices}
+\item{prices}{the time-series of close prices}
 
 \item{jump_thresh}{the jump-threshold (positive)}
 

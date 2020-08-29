@@ -14,7 +14,7 @@ logopt_stock <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 
 {
   # Load data, close prices, arithmetic and log returns
   sdata <- load_stock(ticker)
-  s <- quantmod::Cl(sdata)
+  s <- quantmod::Ad(sdata)
   lx <- diff(log(as.numeric(s)))
   epdf <- stats::density(lx)
   # Empirical estimates
