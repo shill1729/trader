@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of trader is to provide convenient wrappers to other finance packages in R for both API usage to data sources (alpha vantage from quantmod) and custom pricing routines from other packages.
+The goal of trader is to provide a wrapper to AV api if you have a free or premium api key, along with various mathematical finance functions.
 
 ## Installation
 

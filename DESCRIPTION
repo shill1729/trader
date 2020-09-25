@@ -1,19 +1,24 @@
 Package: trader
 Type: Package
-Title: Convenient wrappers to stock/finance packages
+Title: Mathematical finance analysis package
 Version: 0.1.0
 Author: S. Hill
 Maintainer: S. Hill <52792611+shill1729@users.noreply.github.com>
-Description: trader provides wrappers to quantmod, ttr, and other finance packages.
-    Also included are wrappers to robinhoodClient and custom pricing packages.
+Description: Download financial data from Alpha Vantage, build and analyze 
+    models with common mathematical finance tools.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Imports:
     bizdays,
+    httr,
+    jsonlite,
     KellyCriterion,
+    poissonFits,
     pside,
-    quantmod,
+    readr,
     sde,
-    TA
+    TA,
+    xtable,
+    xts

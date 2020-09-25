@@ -1,41 +1,32 @@
-#' One-period arithmetic returns of a given time-series
+#' Compute daily returns of a stock
 #'
-#' @param s the time-series of prices
+#' @param s the time-series of daily prices
 #'
-#' @description {The daily arithmetic returns between two periods is the difference of the prices over the
-#' two periods divided by the first period's price.}
-#' @return vector
-#' @export arithmetic_return
-arithmetic_return <- function(s)
+#' @description {Computes both the daily log return and daily arithmetic return
+#' of a given price time-series.}
+#' @return xts of logarithmic and arithmetic returns
+#' @importFrom stats time
+#' @export daily_returns
+daily_returns <- function(s)
 {
-  # x <- diff(s)[-1]
-  # r <- x
-  # for(i in 1:length(x))
-  # {
-  #   if(s[i] == 0)
-  #   {
-  #     msg <- paste("Zero price in historical data @ index: ", i)
-  #     stop(msg)
-  #   }
-  #   r[i] <- x[i]/s[i]
-  # }
-
-  # Just wrap to quantmod
-  r <- quantmod::periodReturn(x = s, period = "daily", type = "arithmetic")
-  r <- r[-1]
-  names(r) <- names(s)
-  return(r)
+  x <- diff(log(s), na.pad = FALSE)
+  r <- exp(x)-1
+  returns <- xts::xts(x = data.frame(x, r), order.by = stats::time(x))
+  names(returns) <- c("log", "arithmetic")
+  return(returns)
 }
 
-
-#' Daily log-returns
+#' Daily returns of a set of stocks
 #'
-#' @param prices the time-series of (adjusted close) prices
+#' @param stocks xts of stocks
+#' @param type log or arithmetic
 #'
-#' @description {Returns the daily log returns of a price series}
-#' @return numeric
-#' @export log_return
-log_return <- function(prices)
+#' @description {Daily returns of multiple stocks.}
+#' @return xts
+#' @export stock_returns
+stock_returns <- function(stocks, type = "log")
 {
-  return(diff(log(prices))[-1])
+  returns <- do.call(cbind, lapply(stocks, function(x) daily_returns(x)[, type]))
+  names(returns) <- names(stocks)
+  return(returns)
 }

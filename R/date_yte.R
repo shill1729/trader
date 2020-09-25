@@ -28,7 +28,6 @@ date_yte <- function(expiry)
 #' @description {Convert time until expiry date into trading years until expiration. NOTE: this function includes
 #' the exact time-difference but does not account for trading hours.}
 #' @return numeric, the time until the expiry date in trading years
-#' @export time_yte
 time_yte <- function(expiry)
 {
   close_time <- as.POSIXct(paste(expiry, "16:00:00 EDT"), tz = Sys.timezone())

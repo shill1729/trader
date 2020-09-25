@@ -1,0 +1,38 @@
+#' Generate a risk-profile under GBM of a single stock
+#'
+#' @param log_returns daily log returns
+#' @param rate risk-neutral rate proxy
+#'
+#' @description {Computes drift, volatility, Sharpe ratio, Kelly criterion, and growth-rate.}
+#' @return data.frame
+gbmProfile1 <- function(log_returns, rate = 0.02076367)
+{
+  m <- fitGBM(log_returns)
+  m$sharpe <- (m$drift-rate)/m$volat
+  m$kelly <- (m$drift-rate)/m$volat^2
+  m$entropy <- rate+0.5*m$sharpe^2
+  return(m)
+}
+
+#' Generate a risk-profile under GBM of a single stock
+#'
+#' @param log_returns daily log returns
+#' @param rate risk-neutral rate proxy
+#'
+#' @description {Computes drift, volatility, Sharpe ratio, Kelly criterion, and growth-rate.}
+#' @return data.frame
+#' @export gbmProfile
+gbmProfile <- function(log_returns, rate = 0.02076367)
+{
+  if(ncol(log_returns) > 1)
+  {
+    stat_set <- do.call(rbind, lapply(log_returns, function(x) gbmProfile1(x, rate)))
+    stat_set <- stat_set[order(stat_set$entropy, decreasing = TRUE), ]
+    return(stat_set)
+  } else {
+    m <- gbmProfile1(log_returns, rate)
+    return(m)
+  }
+}
+
+

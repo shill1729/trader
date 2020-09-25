@@ -8,24 +8,17 @@
 #'
 #' @description {Counts the number of jumps \eqn{X_n >= a} (and the other respective events) for some jump-threshold \eqn{a} for different periods}
 #' @return time-series of counts per period
+#' @import xts
 #' @export count_jumps
 count_jumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", side = "down", period = "weekly")
 {
-
-  if(return_type == "log")
-  {
-    x <- log_return(prices)
-  } else if(return_type == "arithmetic")
-  {
-    x <- arithmetic_return(prices)
-
-  }
+  x <- daily_returns(prices)[, return_type]
   indicator_up <- ifelse(x >= jump_thresh, 1, 0)
   indicator_down <- ifelse(x <= -jump_thresh, 1, 0)
   indicator_both <- ifelse(abs(x) >= jump_thresh, 1, 0)
   indicator <- eval(as.name(paste("indicator_", side, sep = "")))
   apply_period <- paste("apply.", period, sep = "")
-  apply_period <- match.fun(apply_period)
+  apply_period <- get(apply_period, envir = environment(xts))
   jump_counts <- apply_period(indicator, sum)
   return(jump_counts)
 }

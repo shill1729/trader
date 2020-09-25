@@ -9,12 +9,11 @@
 #'
 #' @description {Implementation of optimal log utility for Merton jump diffusion}
 #' @return list
-#' @export logopt_stock
 logopt_stock <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 63, N = 100)
 {
   # Load data, close prices, arithmetic and log returns
-  sdata <- load_stock(ticker)
-  s <- quantmod::Ad(sdata)
+  sdata <- time_series(ticker, period = "daily")
+  s <- sdata$adj_close
   lx <- diff(log(as.numeric(s)))
   epdf <- stats::density(lx)
   # Empirical estimates
