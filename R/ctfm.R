@@ -8,8 +8,8 @@
 #' @description {Fit a geometric Brownian motion model to daily log-returns data.}
 #'
 #' @return vector
-#' @export fitGBM
-fitGBM <- function(log_returns, time_step = 1/252)
+#' @export fit_gbm
+fit_gbm <- function(log_returns, time_step = 1/252)
 {
   volat <- stats::sd(log_returns)/sqrt(time_step)
   mu <- mean(log_returns)/(time_step)+0.5 * volat^2

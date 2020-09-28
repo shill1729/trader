@@ -5,9 +5,9 @@
 #'
 #' @description {Computes drift, volatility, Sharpe ratio, Kelly criterion, and growth-rate.}
 #' @return data.frame
-gbmProfile1 <- function(log_returns, rate = 0.02076367)
+gbm_profile1 <- function(log_returns, rate = 0.02076367)
 {
-  m <- fitGBM(log_returns)
+  m <- fit_gbm(log_returns)
   m$sharpe <- (m$drift-rate)/m$volat
   m$kelly <- (m$drift-rate)/m$volat^2
   m$entropy <- rate+0.5*m$sharpe^2
@@ -21,8 +21,8 @@ gbmProfile1 <- function(log_returns, rate = 0.02076367)
 #'
 #' @description {Computes drift, volatility, Sharpe ratio, Kelly criterion, and growth-rate.}
 #' @return data.frame
-#' @export gbmProfile
-gbmProfile <- function(log_returns, rate = 0.02076367)
+#' @export gbm_profile
+gbm_profile <- function(log_returns, rate = 0.02076367)
 {
   if(ncol(log_returns) > 1)
   {
@@ -30,7 +30,7 @@ gbmProfile <- function(log_returns, rate = 0.02076367)
     stat_set <- stat_set[order(stat_set$entropy, decreasing = TRUE), ]
     return(stat_set)
   } else {
-    m <- gbmProfile1(log_returns, rate)
+    m <- gbm_profile1(log_returns, rate)
     return(m)
   }
 }
