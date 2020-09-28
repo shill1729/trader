@@ -26,7 +26,7 @@ gbm_profile <- function(log_returns, rate = 0.02076367)
 {
   if(ncol(log_returns) > 1)
   {
-    stat_set <- do.call(rbind, lapply(log_returns, function(x) gbmProfile1(x, rate)))
+    stat_set <- do.call(rbind, lapply(log_returns, function(x) gbm_profile1(x, rate)))
     stat_set <- stat_set[order(stat_set$entropy, decreasing = TRUE), ]
     return(stat_set)
   } else {
