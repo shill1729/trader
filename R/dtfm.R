@@ -34,6 +34,7 @@ fit_dtfm <- function(x, distr = "norm")
 #' @param param parameters of distribution as a vector
 #'
 #' @return numeric
+#' @importFrom numerics dgmm dstable
 #' @export ddtfm
 ddtfm <- function(r, distr = "norm", param)
 {
