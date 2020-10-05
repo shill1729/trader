@@ -17,3 +17,5 @@ company_overview <- function(symbol)
   dat <- jsonlite::fromJSON(txt = httr::content(x = z, type = "text", encoding = "UTF-8"))
   return(dat)
 }
+
+
