@@ -17,4 +17,26 @@ fit_gbm <- function(log_returns, time_step = 1/252)
   return(param)
 }
 
+#' Compute optimal log-growth portfolio for multivariate GBM stocks
+#'
+#' @param symbols vector of stock symbols
+#' @param rate riskless rate of return
+#' @param long_frac fraction of bankroll to use
+#'
+#' @description {Computes both long-only and short-only log-growth optimal
+#' portfolio allocations up to a percentage of total bankroll and the respective
+#' growth rates. }
+#' @return list
+#' @export gbm_portfolio
+gbm_portfolio <- function(symbols, rate = 0, long_frac = 1)
+{
+  stocks <- load_stocks(symbols = symbols)
+  log_ret <- stock_returns(stocks)
+  long <- KellyCriterion::kelly_portfolio(log_ret, rate, long_frac)
+  short <- KellyCriterion::kelly_portfolio(log_ret, rate, 1-long_frac, "short")
+  port <- cbind(long$bet, short$bet)
+  colnames(port) <- c("long", "short")
+  growths <- data.frame(long$growth, short$growth)
+  return(list(weights = port, growth = growths))
+}
 
