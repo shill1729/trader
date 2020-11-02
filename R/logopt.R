@@ -19,30 +19,31 @@ logopt_stock <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 
   # Empirical estimates
   B <- (lx) <= -jt
   Bb <- lx > -jt
-  diffp <- pside::mle_gbm(as.numeric(s)[Bb])
-  mu <- diffp$mu
-  volat <- diffp$volat
+  diffp <- qfin::fitGBM(as.numeric(s)[Bb])
+  mu <- diffp[1]
+  volat <- diffp[2]
   lambda <- (sum(B)/length(lx))*252
   jm <- mean(lx[B])
   jv <- stats::sd(lx[B])
   jump_param <- list(mean = jm, sd = jv)
   model_param <- data.frame(diffp, lambda = lambda, jm = jm, jv = jv)
-  model_pdf <- sde::dmerton(epdf$x, 1/252, drift = mu, volat, lambda, jm, jv)
+  model_pdf <- qfin::dmerton(epdf$x, 1/252, drift = mu, volat, lambda, jm, jv)
   # Compute Kelly fraction via fixed point
   graphics::par(mfrow = c(2, 2))
-  bet <- KellyCriterion::kelly_jdf_fixp(mu, rate, volat, lambda, distr = "norm", jump_param)
-  max_growth <- KellyCriterion::entropy_jdf(bet, 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
+
+  bet <- qfin::kelly_jdf_fixp(mu, rate, volat, lambda, distr = "norm", jump_param)
+  max_growth <- qfin::entropy_jdf(bet, 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
   # Check entropy/growth
   a <- seq(-2, 2, length.out = N)
   growth_rate <- matrix(N)
   for(i in 1:N)
   {
-    growth_rate[i] <- KellyCriterion::entropy_jdf(a[i], 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
+    growth_rate[i] <- qfin::entropy_jdf(a[i], 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
   }
 
   # TEMA plotting for end
   plot(stats::time(utils::tail(s, data_back)), as.numeric(utils::tail(s, data_back)), type = "l", main = ticker)
-  graphics::lines(stats::time(utils::tail(s, data_back)), TA::tema(utils::tail(s, data_back), alpha = 2/(n_tema+1)), col = "purple")
+  graphics::lines(stats::time(utils::tail(s, data_back)), qfin::tema(utils::tail(s, data_back), alpha = 2/(n_tema+1)), col = "purple")
 
   # Plotting of entropy/growth curve
   plot(a, growth_rate, type = "l", main = "Entropy")
@@ -56,7 +57,5 @@ logopt_stock <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 
   print("Optimal control")
   print(data.frame(optimal_control = bet, max_log_growth = max_growth))
   return(list(s = s, x = lx, parameters = model_param, output = data.frame(optimal_control = bet, max_log_growth = max_growth)))
-  # classical <- pside::mle_gbm(as.numeric(s))
-  # print("Pure diffusion case")
-  # print(kelly_gbm(classical$mu, rate, classical$volat))
+
 }

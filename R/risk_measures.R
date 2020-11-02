@@ -7,7 +7,8 @@
 #' @return data.frame
 gbm_profile1 <- function(log_returns, rate = 0.02076367)
 {
-  m <- fit_gbm(log_returns)
+  ms <- qfin::fitGBM(log_returns)
+  m <- data.frame(drift = ms[1], volat = ms[2])
   m$sharpe <- (m$drift-rate)/m$volat
   m$kelly <- (m$drift-rate)/m$volat^2
   m$entropy <- rate+0.5*m$sharpe^2

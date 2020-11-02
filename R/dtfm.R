@@ -1,58 +1,4 @@
-#' Fit returns distribution to daily-arithmetic returns
-#'
-#' @param x time series of daily arithmetic returns
-#' @param distr distribution name: "norm" or "unif"
-#'
-#' @return vector
-#' @import mclust
-#' @export fit_dtfm
-fit_dtfm <- function(x, distr = "norm")
-{
-  if(distr == "unif")
-  {
-    return(c(min = min(x), max = max(x)))
-  } else if(distr == "norm")
-  {
-    return(c(mean = mean(x), sd = stats::sd(x)))
-  } else if(distr == "gmm")
-  {
-    mcfit <- mclust::Mclust(data = x)
-    mix_param <- numerics::extract_mixture(mcfit, 1)
-    return(mix_param)
-  } else if(distr == "stable")
-  {
-    # Fit stable distribution
-    stable_param <- libstableR::stable_fit_mle(rnd = x)
-    return(stable_param)
-  }
-}
 
-#' Probability density function of fitted model
-#'
-#' @param r region of returns
-#' @param distr distribution name: "norm" or "unif"
-#' @param param parameters of distribution as a vector
-#'
-#' @return numeric
-#' @importFrom numerics dgmm dstable
-#' @export ddtfm
-ddtfm <- function(r, distr = "norm", param)
-{
-  ddistr <- paste("d", distr, sep = "")
-  ddistr <- get(ddistr)
-  if(distr == "norm" || distr == "unif")
-  {
-    args <- c(list(r), as.list(param))
-  } else if(distr == "gmm")
-  {
-    args <- list(c(r), param[1, ], param[2, ], param[3, ])
-  } else if(distr == "stable")
-  {
-    args <- list(c(r), param)
-  }
-
-  return(do.call(ddistr, args))
-}
 
 #' Fit a discrete time daily returns distribution and get log-optimal allocation
 #'
@@ -70,9 +16,74 @@ dtfm <- function(symbol, distr = "unif", rate = 0)
   rrate <- (1+rate)^(1/252)-1
   s <- time_series(symbol, "daily")
   x <- daily_returns(s$adj_close)$arithmetic
-  param <- fit_dtfm(x, distr)
-  kelly <- KellyCriterion::kelly_dtfm(distr, param, rrate)
-  entropy <- KellyCriterion::entropy_dtfm(distr, param, rrate)*252
+  param <- qfin::fitDtfm(x, distr)
+
+  kelly <- qfin::kellyDTFM(distr, param, rrate)
+  entropy <- qfin::entropy_dtfm(distr, param, rrate)*252
   # print(KellyCriterion::sim_dtfm(n, as.numeric(s$adj_close[1]), 1800, distr, param, rrate))
   return(list(param = param, kelly = kelly, entropy = entropy))
+}
+
+
+#' Optimal log-growth allocation for single symbol
+#'
+#' @param symbol stock to invest
+#' @param rate bond rate
+#' @param kf reduction for leveraged positions
+#'
+#' @description {Downloads prices, likelihood ratio tests mixture against stable
+#' distribution then computes Kelly-criterion under results.}
+#' @return vector
+#' @importFrom graphics legend lines
+#' @importFrom stats density
+#' @export dtfm_strategy
+dtfm_strategy <- function(symbol, rate = 0, kf = 1)
+{
+  models <- c("gmm", "stable")
+  r <- (1+rate)^(1/252)-1
+  print(paste("1. Downloading", symbol, "prices from Alpha-Vantage"))
+  stock <- time_series(symbol, "daily")
+  s <- stock$adj_close
+  x <- daily_returns(s)$arithmetic
+
+  print("2. Fitting mixture and stable distributions to daily arithmetic returns")
+  params <- lapply(models, function(X) qfin::fitDtfm(x, X))
+  names(params) <- models
+  # Empirical density and model densities
+  epdf <- density(x)
+  # Model densities
+  pdfs <- mapply(function(X, Y) {
+    qfin::ddtfm(epdf$x, X, Y)
+  }, X = models, Y = params)
+
+  # Plot comparisons of densities
+  par(mfrow = c(1, 1))
+  plot(epdf, type = "l", ylim = c(0, max(epdf$y, pdfs)), main = paste(symbol, "daily returns PDF"))
+  lines(epdf$x, pdfs[, 1], col = "blue", lty = "dashed")
+  lines(epdf$x, pdfs[, 2], col = "green", lty = "dashed")
+  legend(x = "topright", legend = c("Empirical", "Mixture", "Stable"), col = c("black", "blue", "green"), lty = 1, cex = 0.6)
+
+  print("3. Computing likelihood ratio test for mixture vs stable fit")
+  LR_test <- qfin::likelihood_ratio(pdfs[, "stable"], pdfs[, "gmm"])
+  if(length(LR_test) > 1)
+  {
+    if(LR_test[[3]] == "Choose H1: X~f")
+    {
+      print("Stable distribution is not rejected")
+      model_fit <- "stable"
+    } else if(LR_test[[3]] == "Choose H2: X~g")
+    {
+      print("Mixture distribution is not rejected")
+      model_fit <- "gmm"
+    }
+  } else if(length(LR_test) == 1)
+  {
+    print("Likelihood ratio test inconclusive; choosing stable")
+    model_fit <- "stable"
+  }
+
+  print(paste("4. Computing log-optimal allocation under", model_fit))
+  kelly <- qfin::kellyDTFM(model_fit, params[[model_fit]], r)*kf
+  growth <- qfin::entropy_dtfm(model_fit, params[[model_fit]], r)
+  return(data.frame(kelly, growth = 252*growth, fractional = kf))
 }

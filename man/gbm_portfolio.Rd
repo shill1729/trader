@@ -4,7 +4,7 @@
 \alias{gbm_portfolio}
 \title{Compute optimal log-growth portfolio for multivariate GBM stocks}
 \usage{
-gbm_portfolio(symbols, rate = 0, long_frac = 1)
+gbm_portfolio(symbols, rate = 0, long_frac = 1, rolling = NULL)
 }
 \arguments{
 \item{symbols}{vector of stock symbols}
@@ -12,6 +12,9 @@ gbm_portfolio(symbols, rate = 0, long_frac = 1)
 \item{rate}{riskless rate of return}
 
 \item{long_frac}{fraction of bankroll to use}
+
+\item{rolling}{the rolling period of prior data to use for estimation, if \code{NULL}
+will use the full sample (default)}
 }
 \value{
 list
