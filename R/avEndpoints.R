@@ -180,13 +180,20 @@ getPriceTimeSeries <- function(symbol, period = "daily", datatype = "json", key 
 #' @export getStocks
 getStocks <- function(symbols, key = "premium")
 {
+  if(key == "premium")
+  {
+    callLimit <- 30
+  } else if(key == "free")
+  {
+    callLimit <- 5
+  }
   tickers <- symbols
   stocks <- list()
   for(i in 1:length(tickers))
   {
     print(tickers[i])
     stocks[[i]] <- getPriceTimeSeries(symbol = tickers[i], period = "daily", key = key)$adj_close
-    if(i%%30==0)
+    if(i%%callLimit==0)
     {
       Sys.sleep(60)
     }
