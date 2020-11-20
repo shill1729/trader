@@ -18,7 +18,7 @@
 gbmPortfolioBacktest <- function(stocks, rolling = TRUE, bankroll = 1500, rate = 0.0, restraint = 0.9, numDays = 30, sampleSize = 30)
 {
 
-  returns <- stock_returns(stocks, "log")
+  returns <- stockReturns(stocks, "log")
   # Number of days, assets
   n <- nrow(stocks)
   m <- ncol(stocks)

@@ -14,8 +14,8 @@
 dtfm <- function(symbol, distr = "unif", rate = 0)
 {
   rrate <- (1+rate)^(1/252)-1
-  s <- time_series(symbol, "daily")
-  x <- daily_returns(s$adj_close)$arithmetic
+  s <- getPriceTimeSeries(symbol, "daily")
+  x <- dailyReturns(s$adj_close)$arithmetic
   param <- qfin::fitDtfm(x, distr)
 
   kelly <- qfin::kellyDTFM(distr, param, rrate)
@@ -42,9 +42,9 @@ dtfm_strategy <- function(symbol, rate = 0, kf = 1)
   models <- c("gmm", "stable")
   r <- (1+rate)^(1/252)-1
   print(paste("1. Downloading", symbol, "prices from Alpha-Vantage"))
-  stock <- time_series(symbol, "daily")
+  stock <- getPriceTimeSeries(symbol, "daily")
   s <- stock$adj_close
-  x <- daily_returns(s)$arithmetic
+  x <- dailyReturns(s)$arithmetic
 
   print("2. Fitting mixture and stable distributions to daily arithmetic returns")
   params <- lapply(models, function(X) qfin::fitDtfm(x, X))

@@ -4,10 +4,10 @@
 #'
 #' @description {The share-price multiplied by shares outstanding}
 #' @return numeric
-#' @export market_cap
-market_cap <- function(symbol)
+#' @export getMarketCap
+getMarketCap <- function(symbol)
 {
-  return(as.numeric(company_overview(symbol)$MarketCapitalization))
+  return(as.numeric(getCompanyOverviewAV(symbol)$MarketCapitalization))
 }
 
 #' Create market portfolio via market-cap weights
@@ -16,14 +16,14 @@ market_cap <- function(symbol)
 #'
 #' @description {The market portfolio i.e. weights equal to market caps}
 #' @return vector
-#' @export market_portfolio
-market_portfolio <- function(symbols)
+#' @export getMarketPortfolio
+getMarketPortfolio <- function(symbols)
 {
   caps <- matrix(0, length(symbols))
   for(i in 1:length(symbols))
   {
     print(symbols[i])
-    caps[i] <- market_cap(symbols[i])
+    caps[i] <- getMarketCap(symbols[i])
     if(i%%30==0 && length(symbols) > 30)
     {
       Sys.sleep(60)
@@ -36,13 +36,13 @@ market_portfolio <- function(symbols)
 
 #' Diversity weighted market portfolio
 #'
-#' @param market_port object returned from \code{market_portfolio}
+#' @param market_port object returned from \code{getMarketPortfolio}
 #' @param p diversity index (a number in the unit interval)
 #'
 #' @description {See SPT (2002) by E. F.}
 #' @return vector
-#' @export diversity_weighted_port
-diversity_weighted_port <- function(market_port, p = 1)
+#' @export diverseMarketPortfolio
+diverseMarketPortfolio <- function(market_port, p = 1)
 {
   (market_port^p)/sum(market_port^p)
 }

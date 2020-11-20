@@ -1,13 +1,13 @@
 #' Compute daily returns of a stock
 #'
-#' @param s the time-series of daily prices
+#' @param s the time-series of daily prices, returned from \code{getPriceTimeSeries}
 #'
 #' @description {Computes both the daily log return and daily arithmetic return
 #' of a given price time-series.}
 #' @return xts of logarithmic and arithmetic returns
 #' @importFrom stats time
-#' @export daily_returns
-daily_returns <- function(s)
+#' @export dailyReturns
+dailyReturns <- function(s)
 {
   x <- diff(log(s), na.pad = FALSE)
   r <- exp(x)-1
@@ -19,14 +19,18 @@ daily_returns <- function(s)
 #' Daily returns of a set of stocks
 #'
 #' @param stocks xts of stocks
-#' @param type log or arithmetic
+#' @param type "log" or "arithmetic"
 #'
 #' @description {Daily returns of multiple stocks.}
-#' @return xts
-#' @export stock_returns
-stock_returns <- function(stocks, type = "log")
+#' @return xts of daily-returns of multiple stocks
+#' @export stockReturns
+stockReturns <- function(stocks, type = "log")
 {
-  returns <- do.call(cbind, lapply(stocks, function(x) daily_returns(x)[, type]))
+  if(type != "log" || type != "arithmetic")
+  {
+    stop("argument 'type' must be 'log' or 'arithmetic'")
+  }
+  returns <- do.call(cbind, lapply(stocks, function(x) dailyReturns(x)[, type]))
   names(returns) <- names(stocks)
   return(returns)
 }

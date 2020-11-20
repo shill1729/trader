@@ -4,8 +4,8 @@ Title: Mathematical finance analysis package
 Version: 0.1.0
 Author: S. Hill
 Maintainer: S. Hill <52792611+shill1729@users.noreply.github.com>
-Description: Download financial data from Alpha Vantage, build and analyze 
-    models with common mathematical finance tools.
+Description: Download financial data from Alpha Vantage with a user-provided API key (free or premium), build and 
+    analyze models with common mathematical finance tools.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
