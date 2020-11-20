@@ -22,7 +22,7 @@ avEndpoint <- function()
 #' @export getQuoteAV
 getQuoteAV <- function(symbol, datatype = "json", key = "premium")
 {
-  if(key != "premium" || key != "free")
+  if(key != "premium" && key != "free")
   {
     stop("argument 'key' must be either 'premium' or 'free'")
   }
@@ -66,7 +66,7 @@ getQuoteAV <- function(symbol, datatype = "json", key = "premium")
 #' @export getCompanyOverviewAV
 getCompanyOverviewAV <- function(symbol, key = "premium")
 {
-  if(key != "premium" || key != "free")
+  if(key != "premium" && key != "free")
   {
     stop("argument 'key' must be either 'premium' or 'free'")
   }
@@ -97,7 +97,7 @@ getCompanyOverviewAV <- function(symbol, key = "premium")
 getPriceTimeSeries <- function(symbol, period = "daily", datatype = "json", key = "premium")
 {
   # Input-error handling
-  if(key != "premium" || key != "free")
+  if(key != "premium" && key != "free")
   {
     stop("argument 'key' must be either 'premium' or 'free'")
   }
