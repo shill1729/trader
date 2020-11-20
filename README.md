@@ -68,7 +68,7 @@ Returned is the optimal fraction, the long-term optimal growth rate, and the red
 ```r
 library(trader)
 symbol <- "NTDOY"
-z <- trader::dtfm_strategy(symbol)
+z <- dtfm_strategy(symbol)
 print(z)
 ```
 
