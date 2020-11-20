@@ -15,7 +15,7 @@ devtools::install_github("shill1729/trader")
 ```
 
 ## Setting up your API key in .Renviron
-Register with Alpha-Vantage to obtain a free API key or subscribe for a premium API key. Save these in your .Renviron file with
+Register with **[Alpha Vantage](https://www.alphavantage.co/support/#api-key)** to obtain a free API key or subscribe for a premium API key. Save these in your .Renviron file with
 ```r
 usethis::edit_r_environ()
 ```
