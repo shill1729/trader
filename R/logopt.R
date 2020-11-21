@@ -1,4 +1,4 @@
-#' Log optimal allocations
+#' Log optimal allocations under Merton jump diffusion model
 #'
 #' @param ticker stock ticker to download
 #' @param jt jump threshold
@@ -9,7 +9,8 @@
 #'
 #' @description {Implementation of optimal log utility for Merton jump diffusion}
 #' @return list
-logopt_stock <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 63, N = 100)
+#' @export optimalMerton
+optimalMerton <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 63, N = 100)
 {
   # Load data, close prices, arithmetic and log returns
   sdata <- getPriceTimeSeries(ticker, period = "daily")

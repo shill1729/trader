@@ -14,8 +14,8 @@
 #' @description {Continuous time idealized backtester on close prices using
 #' optimal allocations recomputed each day under GBM model dynamics.}
 #' @return list
-#' @export gbmPortfolioBacktest
-gbmPortfolioBacktest <- function(stocks, rolling = TRUE, bankroll = 1500, rate = 0.0, restraint = 0.9, numDays = 30, sampleSize = 30)
+#' @export backtestPortfolioGBM
+backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate = 0.0, restraint = 0.9, numDays = 30, sampleSize = 30)
 {
 
   returns <- stockReturns(stocks, "log")
@@ -76,6 +76,38 @@ gbmPortfolioBacktest <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
   output <- list(input = data.frame(bankroll, sampleSize, numDays, rate, restraint),
                  results = results)
   return(output)
+}
+
+
+#' Backtest dominant asset strategy
+#'
+#' @param returns arithmetic returns of stocks
+#' @param bankroll size of initial investment
+#' @param windowSize rolling window size
+#' @param limit upper limit of allocation percentage
+#'
+#' @description {Backtest the dominant asset strategy on close prices.}
+#' @return xts
+#' @export backtestDominantAsset
+backtestDominantAsset <- function(returns, bankroll = 1, windowSize = 30, limit = 0.5)
+{
+  N <- nrow(returns)
+  if(windowSize > N-1)
+  {
+    stop(paste("windowSize must be less than ", N-1))
+  }
+  n <- ncol(returns)
+  portfolioReturn <- matrix(0, nrow = N)
+  for(i in (windowSize+1):N)
+  {
+
+    dat <- qfin::rollingDominantAsset(returns[1:(i-1), ], windowSize, limit)
+    w <- dat$weights
+    portfolioReturn[i] <- 1+t(w)%*%as.numeric(returns[i, ])
+  }
+  results <- bankroll*c(1, cumprod(portfolioReturn[(windowSize+1):N]))
+  results <- xts::xts(x = results, order.by = time(returns[-c(1:(windowSize-1)), ]))
+  return(results)
 }
 
 
