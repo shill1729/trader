@@ -26,7 +26,7 @@ dailyReturns <- function(s)
 #' @export stockReturns
 stockReturns <- function(stocks, type = "log")
 {
-  if(type != "log" || type != "arithmetic")
+  if(type != "log" && type != "arithmetic")
   {
     stop("argument 'type' must be 'log' or 'arithmetic'")
   }
