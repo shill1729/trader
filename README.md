@@ -13,7 +13,7 @@ You can install the package via devtools from github
 ``` r
 devtools::install_github("shill1729/trader")
 ```
-Note that all the trading-model functions depend on the package qfin.
+
 
 ## Setting up your API key in .Renviron
 Register with **[Alpha Vantage](https://www.alphavantage.co/support/#api-key)** to obtain a free API key or subscribe for a premium API key. Save these in your .Renviron file with

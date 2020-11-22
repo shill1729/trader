@@ -16,10 +16,10 @@ dtfm <- function(symbol, distr = "unif", rate = 0)
   rrate <- (1+rate)^(1/252)-1
   s <- getPriceTimeSeries(symbol, "daily")
   x <- dailyReturns(s$adj_close)$arithmetic
-  param <- qfin::fitDtfm(x, distr)
+  param <- findistr::fitDTFM(x, distr)
 
-  kelly <- qfin::kellyDTFM(distr, param, rrate)
-  entropy <- qfin::entropy_dtfm(distr, param, rrate)*252
+  kelly <- kellyfractions::kellyDTFM(distr, param, rrate)
+  entropy <- kellyfractions::entropyDTFM(distr, param, rrate)*252
   # print(KellyCriterion::sim_dtfm(n, as.numeric(s$adj_close[1]), 1800, distr, param, rrate))
   return(list(param = param, kelly = kelly, entropy = entropy))
 }
@@ -47,13 +47,13 @@ dtfm_strategy <- function(symbol, rate = 0, kf = 1)
   x <- dailyReturns(s)$arithmetic
 
   print("2. Fitting mixture and stable distributions to daily arithmetic returns")
-  params <- lapply(models, function(X) qfin::fitDtfm(x, X))
+  params <- lapply(models, function(X) findistr::fitDTFM(x, X))
   names(params) <- models
   # Empirical density and model densities
   epdf <- density(x)
   # Model densities
   pdfs <- mapply(function(X, Y) {
-    qfin::ddtfm(epdf$x, X, Y)
+    findistr::ddtfm(epdf$x, X, Y)
   }, X = models, Y = params)
 
   # Plot comparisons of densities
@@ -64,7 +64,7 @@ dtfm_strategy <- function(symbol, rate = 0, kf = 1)
   legend(x = "topright", legend = c("Empirical", "Mixture", "Stable"), col = c("black", "blue", "green"), lty = 1, cex = 0.6)
 
   print("3. Computing likelihood ratio test for mixture vs stable fit")
-  LR_test <- qfin::likelihood_ratio(pdfs[, "stable"], pdfs[, "gmm"])
+  LR_test <- findistr::likelihood_ratio(pdfs[, "stable"], pdfs[, "gmm"])
   if(length(LR_test) > 1)
   {
     if(LR_test[[3]] == "Choose H1: X~f")
@@ -83,7 +83,7 @@ dtfm_strategy <- function(symbol, rate = 0, kf = 1)
   }
 
   print(paste("4. Computing log-optimal allocation under", model_fit))
-  kelly <- qfin::kellyDTFM(model_fit, params[[model_fit]], r)*kf
-  growth <- qfin::entropy_dtfm(model_fit, params[[model_fit]], r)
+  kelly <- kellyfractions::kellyDTFM(model_fit, params[[model_fit]], r)*kf
+  growth <- kellyfractions::entropyDTFM(model_fit, params[[model_fit]], r)
   return(data.frame(kelly, growth = 252*growth, fractional = kf))
 }

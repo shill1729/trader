@@ -12,10 +12,11 @@ LazyData: true
 RoxygenNote: 7.1.1
 Imports:
     bizdays,
+    findistr,
     httr,
     jsonlite,
+    kellyfractions,
     poissonFits,
-    qfin,
     readr,
     xtable,
     xts
