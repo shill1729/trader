@@ -33,10 +33,13 @@ backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
   # Create the portfolio array
   portfolio <- matrix(0, nrow = numDays)
   portfolio[1] <- bankroll
-  ww <- kellyfractions::kellyPortfolioGBM(returns[1:(sampleSize),], rate, restraint)
-  w <- (ww$bet[-c(m+1)]) # remove cash component
+  par <- findistr::fitGBM(returns[1:(sampleSize), ])
+  drift <- par$drift
+  Sigma <- par$Sigma
+  ww <- kellyfractions::kellyPortfolioGBM(drift, Sigma, rate, restraint)
+  w <- (ww[-c(m+1)]) # remove cash component
   shares <- bankroll*w/stocks[sampleSize+1, ]
-  cash <- ww$bet[m+1]*bankroll
+  cash <- ww[m+1]*bankroll
   # Populate it
 
   for(i in 2:numDays)
@@ -49,16 +52,22 @@ backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
     # use i:(...) for rolling window of data used in the estimation
     if(rolling)
     {
-      ww <- kellyfractions::kellyPortfolioGBM(returns[i:(sampleSize+i-1),], rate, restraint)
+      par <- findistr::fitGBM(returns[i:(sampleSize+i-1),])
+      drift <- par$drift
+      Sigma <- par$Sigma
+      ww <- kellyfractions::kellyPortfolioGBM(drift, Sigma, rate, restraint)
 
     } else
     {
-      ww <- kellyfractions::kellyPortfolioGBM(returns[1:(sampleSize+i-1),], rate, restraint)
+      par <- findistr::fitGBM(returns[1:(sampleSize+i-1),])
+      drift <- par$drift
+      Sigma <- par$Sigma
+      ww <- kellyfractions::kellyPortfolioGBM(drift, Sigma, rate, restraint)
     }
 
-    w <- (ww$bet[-c(m+1)]) # remove cash component
+    w <- (ww[-c(m+1)]) # remove cash component
     shares <- portfolio[i]*w/stocks[sampleSize+i, ]
-    cash <- ww$bet[m+1]*portfolio[i]
+    cash <- ww[m+1]*portfolio[i]
     # print(shares[, shares>0])
 
 
