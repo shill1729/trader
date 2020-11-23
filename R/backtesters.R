@@ -33,7 +33,7 @@ backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
   # Create the portfolio array
   portfolio <- matrix(0, nrow = numDays)
   portfolio[1] <- bankroll
-  par <- findistr::fitGBM(returns[1:(sampleSize), ])
+  par <- findistr::fitGBMs(returns[1:(sampleSize), ])
   drift <- par$drift
   Sigma <- par$Sigma
   ww <- kellyfractions::kellyPortfolioGBM(drift, Sigma, rate, restraint)
@@ -52,14 +52,14 @@ backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
     # use i:(...) for rolling window of data used in the estimation
     if(rolling)
     {
-      par <- findistr::fitGBM(returns[i:(sampleSize+i-1),])
+      par <- findistr::fitGBMs(returns[i:(sampleSize+i-1),])
       drift <- par$drift
       Sigma <- par$Sigma
       ww <- kellyfractions::kellyPortfolioGBM(drift, Sigma, rate, restraint)
 
     } else
     {
-      par <- findistr::fitGBM(returns[1:(sampleSize+i-1),])
+      par <- findistr::fitGBMs(returns[1:(sampleSize+i-1),])
       drift <- par$drift
       Sigma <- par$Sigma
       ww <- kellyfractions::kellyPortfolioGBM(drift, Sigma, rate, restraint)
