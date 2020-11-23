@@ -9,8 +9,7 @@
 #'
 #' @description {Implementation of optimal log utility for Merton jump diffusion}
 #' @return list
-#' @export optimalMerton
-optimalMerton <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 63, N = 100)
+optimalMertonTest <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema = 63, N = 100)
 {
   # Load data, close prices, arithmetic and log returns
   sdata <- getPriceTimeSeries(ticker, period = "daily")
@@ -32,14 +31,14 @@ optimalMerton <- function(ticker, jt = 0.01, rate = 0, data_back = 180, n_tema =
   # Compute Kelly fraction via fixed point
   graphics::par(mfrow = c(2, 2))
 
-  bet <- kellyfractions::kelly_jdf_fixp(mu, rate, volat, lambda, distr = "norm", jump_param)
-  max_growth <- kellyfractions::entropy_jdf(bet, 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
+  bet <- kellyfractions::kellyJumpDiffusionFP(mu, rate, volat, lambda, distr = "norm", jump_param)
+  max_growth <- kellyfractions::entropyJumpDiffusion(bet, 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
   # Check entropy/growth
   a <- seq(-2, 2, length.out = N)
   growth_rate <- matrix(N)
   for(i in 1:N)
   {
-    growth_rate[i] <- kellyfractions::entropy_jdf(a[i], 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
+    growth_rate[i] <- kellyfractions::entropyJumpDiffusion(a[i], 1, 1, mu, rate, volat, lambda, distr = "norm", jump_param)
   }
 
   # TEMA plotting for end

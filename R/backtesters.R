@@ -33,7 +33,7 @@ backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
   # Create the portfolio array
   portfolio <- matrix(0, nrow = numDays)
   portfolio[1] <- bankroll
-  ww <- kellyfractions::portfolioGBM(returns[1:(sampleSize),], rate, restraint)
+  ww <- kellyfractions::kellyPortfolioGBM(returns[1:(sampleSize),], rate, restraint)
   w <- (ww$bet[-c(m+1)]) # remove cash component
   shares <- bankroll*w/stocks[sampleSize+1, ]
   cash <- ww$bet[m+1]*bankroll
@@ -49,11 +49,11 @@ backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
     # use i:(...) for rolling window of data used in the estimation
     if(rolling)
     {
-      ww <- kellyfractions::portfolioGBM(returns[i:(sampleSize+i-1),], rate, restraint)
+      ww <- kellyfractions::kellyPortfolioGBM(returns[i:(sampleSize+i-1),], rate, restraint)
 
     } else
     {
-      ww <- kellyfractions::portfolioGBM(returns[1:(sampleSize+i-1),], rate, restraint)
+      ww <- kellyfractions::kellyPortfolioGBM(returns[1:(sampleSize+i-1),], rate, restraint)
     }
 
     w <- (ww$bet[-c(m+1)]) # remove cash component
