@@ -8,16 +8,16 @@
 #' @description {Kelly-criterion for long and short portfolios under GBM with rolling
 #' estimations.}
 #' @return data.frame
-#' @export logOptimalWeightsGBM
-logOptimalWeightsGBM <- function(symbols, rate = 0, restraint = 1, rollingPeriod = 60)
+#' @export optimalPortfolio
+optimalPortfolio <- function(symbols, rate = 0, restraint = 1, rollingPeriod = 60)
 {
+  # Get stocks and compute daily log-returns
+  stocks <- getStocks(symbols)
   # Check input
   if(nrow(stocks) < rollingPeriod)
   {
     stop("Not enough samples of prices")
   }
-  # Get stocks and compute daily log-returns
-  stocks <- getStocks(symbols)
   log_returns <- stockReturns(stocks)
   # Estimate either rolling drift/covariance or full-sample
   if(!is.null(rollingPeriod))
