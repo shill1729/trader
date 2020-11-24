@@ -4,17 +4,28 @@
 #' @param rate risk-free rate on cash
 #' @param restraint percentage of wealth to go up to
 #' @param rollingPeriod rolling period size, can be \code{NULL} for full
+#' @param stocks default NULL, data returned from \code{getStocks()}.
 #'
 #' @description {Kelly-criterion for long and short portfolios under GBM with rolling
-#' estimations.}
+#' estimations. Price data will either be looked up or can be passed.}
 #' @return data.frame
 #' @export optimalPortfolio
-optimalPortfolio <- function(symbols, rate = 0, restraint = 1, rollingPeriod = 60)
+optimalPortfolio <- function(symbols, rate = 0, restraint = 1, rollingPeriod = 60, stocks = NULL)
 {
   # Get stocks and compute daily log-returns
-  stocks <- getStocks(symbols)
+  if(is.null(stocks))
+  {
+    stocks <- getStocks(symbols)
+  } else
+  {
+    if(!all.equal(names(stocks), symbols))
+    {
+      stop("stock names are not equal to given symbols")
+    }
+  }
+
   # Check input
-  if(nrow(stocks) < rollingPeriod)
+  if(nrow(stocks) < rollingPeriod && !is.null(rollingPeriod))
   {
     stop("Not enough samples of prices")
   }

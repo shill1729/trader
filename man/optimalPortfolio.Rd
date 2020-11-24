@@ -4,7 +4,13 @@
 \alias{optimalPortfolio}
 \title{Optimal long-short portfolios under geometric Brownian motion}
 \usage{
-optimalPortfolio(symbols, rate = 0, restraint = 1, rollingPeriod = 60)
+optimalPortfolio(
+  symbols,
+  rate = 0,
+  restraint = 1,
+  rollingPeriod = 60,
+  stocks = NULL
+)
 }
 \arguments{
 \item{symbols}{portfolio of stocks}
@@ -14,11 +20,13 @@ optimalPortfolio(symbols, rate = 0, restraint = 1, rollingPeriod = 60)
 \item{restraint}{percentage of wealth to go up to}
 
 \item{rollingPeriod}{rolling period size, can be \code{NULL} for full}
+
+\item{stocks}{default NULL, data returned from \code{getStocks()}.}
 }
 \value{
 data.frame
 }
 \description{
 {Kelly-criterion for long and short portfolios under GBM with rolling
-estimations.}
+estimations. Price data will either be looked up or can be passed.}
 }
