@@ -67,3 +67,20 @@ tema <- function(x, alpha)
   tma <- 3*ema(x, alpha)-3*ema(ema(x, alpha), alpha)+ema(ema(ema(x, alpha), alpha), alpha)
   return(tma)
 }
+
+
+#' Plot wrapper for TEMAs
+#'
+#' @param s adjusted close price time-series
+#' @param data_back number of days to look back
+#' @param n_tema number of days for the approximate window in the tema
+#' @param symbol symbol name
+#'
+#' @description {Plot wrapper for TEMAs}
+#' @return null
+#' @export plotTEMA
+plotTEMA <- function(s, data_back = 30, n_tema = 30, symbol)
+{
+  plot(stats::time(utils::tail(s, data_back)), as.numeric(utils::tail(s, data_back)), type = "l", main = symbol, xlab = "Time", ylab = "Price")
+  graphics::lines(stats::time(utils::tail(s, data_back)), tema(utils::tail(s, data_back), alpha = 2/(n_tema+1)), col = "purple")
+}
