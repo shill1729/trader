@@ -2,7 +2,7 @@
 % Please edit documentation in R/backtesters.R
 \name{backtestPortfolioGBM}
 \alias{backtestPortfolioGBM}
-\title{Backtester for GBM portfolio strategy}
+\title{Backtester for GBM Kelly-portfolio strategy}
 \usage{
 backtestPortfolioGBM(
   stocks,
@@ -33,6 +33,6 @@ backtestPortfolioGBM(
 list
 }
 \description{
-{Continuous time idealized backtester on close prices using
-optimal allocations recomputed each day under GBM model dynamics.}
+{Backtest the Kelly-portfolio on a set of stock prices. The vector of drifts and
+covariance matrix are estimated using either the entire sample set or a rolling window of it.}
 }

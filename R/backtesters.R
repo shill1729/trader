@@ -1,7 +1,4 @@
-# Continuous time GBM backtester for portfolios
-
-
-#' Backtester for GBM portfolio strategy
+#' Backtester for GBM Kelly-portfolio strategy
 #'
 #' @param stocks the data set of stocks
 #' @param rolling boolean for rolling estimates
@@ -11,8 +8,8 @@
 #' @param numDays number of days to trade for
 #' @param sampleSize number of days for initial sample size in training data or rolling window size
 #'
-#' @description {Continuous time idealized backtester on close prices using
-#' optimal allocations recomputed each day under GBM model dynamics.}
+#' @description {Backtest the Kelly-portfolio on a set of stock prices. The vector of drifts and
+#' covariance matrix are estimated using either the entire sample set or a rolling window of it.}
 #' @return list
 #' @export backtestPortfolioGBM
 backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate = 0.0, restraint = 0.9, numDays = 30, sampleSize = 30)
@@ -64,16 +61,11 @@ backtestPortfolioGBM <- function(stocks, rolling = TRUE, bankroll = 1500, rate =
       Sigma <- par$Sigma
       ww <- kellyfractions::kellyPortfolioGBM(drift, Sigma, rate, restraint)
     }
-
     w <- (ww[-c(m+1)]) # remove cash component
     shares <- portfolio[i]*w/stocks[sampleSize+i, ]
     cash <- ww[m+1]*portfolio[i]
     # print(shares[, shares>0])
-
-
   }
-
-
   # Time-stamps
   tts <- time(stocks[(sampleSize+1):(sampleSize+numDays),])
   portfolio <- xts::xts(x = portfolio, order.by = tts)

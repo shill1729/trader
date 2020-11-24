@@ -2,7 +2,7 @@
 % Please edit documentation in R/portfolios.R
 \name{logOptimalWeightsGBM}
 \alias{logOptimalWeightsGBM}
-\title{Optimal long-short positions}
+\title{Optimal long-short portfolios under geometric Brownian motion}
 \usage{
 logOptimalWeightsGBM(symbols, rate = 0, restraint = 1, rollingPeriod = 60)
 }
