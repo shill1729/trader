@@ -17,6 +17,7 @@ Imports:
     jsonlite,
     kellyfractions,
     poissonFits,
+    quantmod,
     readr,
     xtable,
     xts
