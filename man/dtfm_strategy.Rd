@@ -4,12 +4,14 @@
 \alias{dtfm_strategy}
 \title{Optimal log-growth allocation for single symbol}
 \usage{
-dtfm_strategy(symbol, rate = 0, kf = 1)
+dtfm_strategy(symbol, rollingWindow = NULL, rate = 0, kf = 1)
 }
 \arguments{
 \item{symbol}{stock to invest}
 
-\item{rate}{bond rate}
+\item{rollingWindow}{use NULL for entire price history or integer for most recent \code{n} days}
+
+\item{rate}{risk-free bond yield rate}
 
 \item{kf}{reduction for leveraged positions}
 }

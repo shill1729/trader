@@ -28,7 +28,8 @@ dtfm <- function(symbol, distr = "unif", rate = 0)
 #' Optimal log-growth allocation for single symbol
 #'
 #' @param symbol stock to invest
-#' @param rate bond rate
+#' @param rollingWindow use NULL for entire price history or integer for most recent \code{n} days
+#' @param rate risk-free bond yield rate
 #' @param kf reduction for leveraged positions
 #'
 #' @description {Downloads prices, likelihood ratio tests mixture against stable
@@ -37,15 +38,21 @@ dtfm <- function(symbol, distr = "unif", rate = 0)
 #' @importFrom graphics legend lines
 #' @importFrom stats density
 #' @export dtfm_strategy
-dtfm_strategy <- function(symbol, rate = 0, kf = 1)
+dtfm_strategy <- function(symbol, rollingWindow = NULL, rate = 0, kf = 1)
 {
   models <- c("gmm", "stable")
-  r <- (1+rate)^(1/252)-1
+  r <- exp(rate/252)-1
   print(paste("1. Downloading", symbol, "prices from Alpha-Vantage"))
   stock <- getPriceTimeSeries(symbol, "daily")
   s <- stock$adj_close
   x <- dailyReturns(s)$arithmetic
-
+  if(!is.null(rollingWindow) && nrow(x) >= rollingWindow)
+  {
+    x <- utils::tail(x, rollingWindow)
+  } else
+  {
+    stop(paste("'rollingWindow' must be less than data-length", nrow(x)))
+  }
   print("2. Fitting mixture and stable distributions to daily arithmetic returns")
   params <- lapply(models, function(X) findistr::fitDTFM(x, X))
   names(params) <- models
@@ -78,7 +85,7 @@ dtfm_strategy <- function(symbol, rate = 0, kf = 1)
     }
   } else if(length(LR_test) == 1)
   {
-    print("Likelihood ratio test inconclusive; choosing stable")
+    print("Likelihood ratio test inconclusive; choosing stable anyway")
     model_fit <- "stable"
   }
 
@@ -87,3 +94,5 @@ dtfm_strategy <- function(symbol, rate = 0, kf = 1)
   growth <- kellyfractions::entropyDTFM(model_fit, params[[model_fit]], r)
   return(data.frame(kelly, growth = 252*growth, fractional = kf))
 }
+
+
