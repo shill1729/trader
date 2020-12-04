@@ -68,6 +68,7 @@ Returned is the optimal fraction, the long-term optimal growth rate, and the red
 ```r
 library(trader)
 symbol <- "NTDOY"
+# Default call uses entire price history, can be changed with rollingWindow
 z <- dtfm_strategy(symbol)
 print(z)
 ```
