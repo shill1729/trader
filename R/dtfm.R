@@ -49,7 +49,7 @@ dtfm_strategy <- function(symbol, rollingWindow = NULL, rate = 0, kf = 1)
   if(!is.null(rollingWindow) && nrow(x) >= rollingWindow)
   {
     x <- utils::tail(x, rollingWindow)
-  } else
+  } else if(nrow(x) >= rollingWindow)
   {
     stop(paste("'rollingWindow' must be less than data-length", nrow(x)))
   }
