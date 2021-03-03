@@ -23,6 +23,12 @@ optimalPortfolio <- function(symbols, rate = 0, restraint = 1, rollingPeriod = 6
       stop("stock names are not equal to given symbols")
     }
   }
+  if(Sys.time() < paste(Sys.Date(), "16:00:00 EST"))
+  {
+    ww <- quantmod::getQuote(Symbols = symbols)[, "Last"]
+    ww <- as.xts(t(ww), order.by = Sys.Date())
+    stocks <- rbind(stocks, ww)
+  }
 
   # Check input
   if(nrow(stocks) < rollingPeriod && !is.null(rollingPeriod))

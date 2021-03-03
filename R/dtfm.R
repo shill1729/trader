@@ -46,12 +46,16 @@ dtfm_strategy <- function(symbol, rollingWindow = NULL, rate = 0, kf = 1)
   stock <- getPriceTimeSeries(symbol, "daily")
   s <- stock$adj_close
   x <- dailyReturns(s)$arithmetic
-  if(!is.null(rollingWindow) && nrow(x) >= rollingWindow)
+  if(!is.null(rollingWindow))
   {
-    x <- utils::tail(x, rollingWindow)
-  } else if(nrow(x) >= rollingWindow)
-  {
-    stop(paste("'rollingWindow' must be less than data-length", nrow(x)))
+    if(rollingWindow <= nrow(x))
+    {
+      x <- utils::tail(x, rollingWindow)
+    } else
+    {
+      stop(paste("'rollingWindow' must be less than data-length", nrow(x)))
+    }
+
   }
   print("2. Fitting mixture and stable distributions to daily arithmetic returns")
   params <- lapply(models, function(X) findistr::fitDTFM(x, X))

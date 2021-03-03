@@ -26,7 +26,7 @@ countJumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", s
 
 #' Ad-hoc Poisson jump model
 #'
-#' @param symbol ticker symbol
+#' @param symbol ticker symbol; can be stock ticker or a cryptocurrency
 #' @param jump_thresh threshold of jump size
 #' @param side direction of jump: up or down
 #'
@@ -39,9 +39,17 @@ countJumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", s
 #' @export poissonJumps
 poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up")
 {
-  ticker <- symbol
-  s <- getPriceTimeSeries(ticker, "daily")
-  adj_prices <- s$adj_close
+  adj_prices <- 0
+  if(!symbol %in% c("BTC", "DOGE", "ETH", "LTC"))
+  {
+    s <- getPriceTimeSeries(symbol, "daily")
+    adj_prices <- s$adj_close
+  } else
+  {
+    s <- getCryptoCurrency(symbol)
+    adj_prices <- s$close
+  }
+
   jc <- countJumps(adj_prices, jump_thresh = jump_thresh, side = side, period = "weekly")
 
   # Testing for independence
@@ -49,7 +57,7 @@ poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up")
   # print(tseries::pp.test(x = jc))
   print(Box.test(x = jc))
   par(mfrow = c(1, 1))
-  acf(as.numeric(jc), main = paste(ticker, "ACF"))
+  acf(as.numeric(jc), main = paste(symbol, "ACF"))
 
   # Poisson fit + evaluating goodness of fit
   z <- poissonFits::poissonFit(countsData = jc)

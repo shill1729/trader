@@ -7,7 +7,7 @@
 poissonJumps(symbol, jump_thresh = 0.03, side = "up")
 }
 \arguments{
-\item{symbol}{ticker symbol}
+\item{symbol}{ticker symbol; can be stock ticker or a cryptocurrency}
 
 \item{jump_thresh}{threshold of jump size}
 

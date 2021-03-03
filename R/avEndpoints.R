@@ -33,7 +33,7 @@ getQuoteAV <- function(symbol, datatype = "json", key = "premium")
                   datatype = datatype
   )
   request <- httr::GET(url = avEndpoint(), query = payload)
-  print(httr::http_status(request))
+  print(unlist(httr::http_status(request)))
   if(datatype == "json")
   {
     dat <- jsonlite::fromJSON(txt = httr::content(x = request, type = "text", encoding = "UTF-8"))
@@ -77,7 +77,7 @@ getCompanyOverviewAV <- function(symbol, key = "premium")
   )
 
   z <- httr::GET(url = avEndpoint(), query = payload)
-  print(httr::http_status(z))
+  print(unlist(httr::http_status(z)))
   dat <- jsonlite::fromJSON(txt = httr::content(x = z, type = "text", encoding = "UTF-8"))
   return(dat)
 }
@@ -131,7 +131,7 @@ getPriceTimeSeries <- function(symbol, period = "daily", datatype = "json", key 
   # GET request
   request <- httr::GET(url = avEndpoint(), query = payload)
   # Print the status for the user
-  print(httr::http_status(request))
+  print(unlist(httr::http_status(request)))
   # Depending on requested data type we have different parsing and formatting
   if(datatype == "json")
   {

@@ -13,6 +13,7 @@ RoxygenNote: 7.1.1
 Imports:
     bizdays,
     findistr,
+    fkpde,
     httr,
     jsonlite,
     kellyfractions,
