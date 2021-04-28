@@ -17,6 +17,7 @@ Imports:
     httr,
     jsonlite,
     kellyfractions,
+    plot3D,
     poissonFits,
     quantmod,
     readr,
