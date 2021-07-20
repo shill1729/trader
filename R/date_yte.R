@@ -8,7 +8,7 @@
 date_yte <- function(expiry)
 {
   # If a financial calendar is not available, create one
-  if(!bizdays::has.calendars("trading"))
+  if(!bizdays::has_calendars("trading"))
   {
     bizdays::create.calendar(name = "trading",
                              weekdays = c("saturday", "sunday"),
