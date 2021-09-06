@@ -103,30 +103,29 @@ getPriceTimeSeries <- function(symbol, period = "daily", datatype = "json", key 
   }
   apikey <- paste(key, "_api_key", sep = "")
 
-
+  # For daily, weekly, monthly, we append need to pass x_adjusted
   if(period == "daily" || period == "weekly" || period == "monthly")
   {
     per <- paste(period, "_adjusted", sep = "")
+  } else if(period == "intraday")
+  {
+    per <- period
   }
-  # period = intraday requires separate payload
+  # Payload base
+  payload <- list("function" = paste("TIME_SERIES_", toupper(per), sep = ""),
+                  symbol = symbol,
+                  outputsize = "full",
+                  datatype = datatype,
+                  apikey = Sys.getenv(apikey)
+  )
+  # For intraday add interval resolution, for else add adjusted boolean
   if(period == "intraday")
   {
-    payload <- list("function" = paste("TIME_SERIES_", toupper(period), sep = ""),
-                    symbol = symbol,
-                    interval = "1min",
-                    adjusted = TRUE,
-                    outputsize = "full",
-                    datatype = datatype,
-                    apikey = Sys.getenv(apikey)
-    )
-  } else # period = daily, weekly, monthly have identical payloads
+    payload$interval = "1min"
+
+  } else if(period %in% c("daily", "weekly", "monthly"))
   {
-    payload <- list("function" = paste("TIME_SERIES_", toupper(per), sep = ""),
-                    symbol = symbol,
-                    outputsize = "full",
-                    datatype = datatype,
-                    apikey = Sys.getenv(apikey)
-    )
+    payload$adjusted = TRUE
   }
   # GET request
   request <- httr::GET(url = avEndpoint(), query = payload)
@@ -177,7 +176,6 @@ getPriceTimeSeries <- function(symbol, period = "daily", datatype = "json", key 
 #' @description {Returns common sample of historical prices of given portfolio.}
 #' @return xts
 #' @importFrom stats complete.cases
-#' @export getStocks
 getStocks <- function(symbols, key = "premium")
 {
   if(key == "premium")
@@ -271,7 +269,6 @@ getCryptoCurrency <- function(symbol = "BTC", market = "USD", datatype = "json",
 #' @description {Returns common sample of historical prices of given portfolio of cryptocurrencies.}
 #' @return xts
 #' @importFrom stats complete.cases
-#' @export getCoins
 getCoins <- function(symbols, key = "premium")
 {
   if(key == "premium")

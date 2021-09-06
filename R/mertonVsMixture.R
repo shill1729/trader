@@ -43,6 +43,7 @@ mertonMixtureDecision <- function(logReturns, fits, spot, rate = 0, symbol = "",
   } else if(lrt$result == "Choose H2: X~g")
   {
     param <- mixtureFit
+    print(param)
     # TODO consider optionality for log(s/spot) past data
     k <- kellyfractions::kellyMixtureDiffusion(0, spot, spot, rate, param)
     g <- kellyfractions::entropyMixtureDiffusion(1, spot, spot, rate, param, resolution = c(100, 100))

@@ -50,10 +50,15 @@ discreteTimeRiskProfile <- function(symbol, singleAriRet, rate = 0, rollingWindo
   }, X = models, Y = parameters)
   model_kellys
 
+  # Compute all model probability density functions
+  model_entropy <- mapply(function(X, Y) {
+    kellyfractions::entropyDTFM(X, Y, rate = (exp(rate)^(1/252)-1))
+  }, X = models, Y = parameters)
+
   # Likelihood ratio test for stable vs gmm
   lrt <- findistr::likelihood_ratio(f = model_pdfs[, "stable"], g = model_pdfs[, "gmm"])
   vrisk <- findistr::stableVAR(p = 0.99, pars = parameters$stable)
   # Gather together in one output
-  output <- list(parameters = parameters, lrt = lrt[[3]], valueAtRisk = vrisk, fractions = model_kellys)
+  output <- list(parameters = parameters, lrt = lrt[[3]], valueAtRisk = vrisk, fractions = model_kellys, entropy = model_entropy)
   return(output)
 }

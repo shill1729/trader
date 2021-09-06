@@ -13,7 +13,7 @@ beta2Hedge <- function(symbol, period = "daily", key = "premium")
 {
   symbols <- c("SPY", symbol, "VXX")
   # TODO: can we figure out a better way than commenting out this?
-  stocks <- getStocks(symbols)
+  stocks <- ravapi::getStocks(symbols)
   arithmeticReturns <- stockReturns(stocks, "arithmetic")
   return(betaHedge2(arithmeticReturns))
 }
