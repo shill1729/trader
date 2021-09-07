@@ -22,6 +22,7 @@ avEndpoint <- function()
 #' @export getQuoteAV
 getQuoteAV <- function(symbol, datatype = "json", key = "premium")
 {
+  warning("Depcreated, use ravapi::getQuote")
   if(key != "premium" && key != "free")
   {
     stop("argument 'key' must be either 'premium' or 'free'")
@@ -66,6 +67,7 @@ getQuoteAV <- function(symbol, datatype = "json", key = "premium")
 #' @export getCompanyOverviewAV
 getCompanyOverviewAV <- function(symbol, key = "premium")
 {
+  warning("Depcreated, use ravapi::getCompanyOverview")
   if(key != "premium" && key != "free")
   {
     stop("argument 'key' must be either 'premium' or 'free'")
@@ -96,6 +98,7 @@ getCompanyOverviewAV <- function(symbol, key = "premium")
 #' @export getPriceTimeSeries
 getPriceTimeSeries <- function(symbol, period = "daily", datatype = "json", key = "premium")
 {
+  warning("Deprecated use ravapi::getStock")
   # Input-error handling
   if(key != "premium" && key != "free")
   {

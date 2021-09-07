@@ -3,21 +3,39 @@
 #' @param symbol the stock symbol
 #' @param days_back number of days back to view
 #' @param tema_window the TEMA moving window
+#' @param period "daily", "weekly", "monthly", "yearly" or "intraday", only for stocks. Coins return daily series only and this argument is ignored.
 #' @param adj whether to use adjusted close prices or not (boolean)
+#' @param envir environment to load stock data into
 #'
-#' @description {Chart a candlestick series of a stock price history.
+#' @description {Chart a candlestick series of a stock price or cryptocurrency history.
 #' In blue/red is the long/short-term TEMA filter on either the close or adjusted close prices,
 #' and below is the volume.}
 #' @return NULL
 #' @import ggplot2
 #' @importFrom rlang .data
 #' @export chart
-chart <- function(symbol, days_back = 63, tema_window = 21, adj = FALSE)
+chart <- function(symbol, days_back = 120, tema_window = 50, period = "daily", adj = FALSE, envir = parent.frame())
 {
+  symbol_data <- paste(symbol, "_", period,"_data", sep = "")
   tema_input <- ifelse(adj, "adj_close", "close")
   alpha <- 2/(tema_window+1)
   alpha2 <- 2/(tema_window/2+1)
-  dat <- ravapi::getStock(symbol)
+
+  if(exists(symbol_data))
+  {
+    print("Data already loaded")
+    dat <- eval(as.symbol(symbol_data))
+  } else
+  {
+    if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
+    {
+      dat <- ravapi::getCoin(symbol)
+    } else
+    {
+      dat <- ravapi::getStock(symbol, period)
+    }
+  }
+  assign(x = symbol_data, value = dat, envir = envir)
   if(days_back <= nrow(dat))
   {
     dat <- tail(dat, days_back)

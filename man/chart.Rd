@@ -4,7 +4,14 @@
 \alias{chart}
 \title{Chart a candlestick series of a stock with a TEMA filter and volume}
 \usage{
-chart(symbol, days_back = 63, tema_window = 21, adj = FALSE)
+chart(
+  symbol,
+  days_back = 120,
+  tema_window = 50,
+  period = "daily",
+  adj = FALSE,
+  envir = parent.frame()
+)
 }
 \arguments{
 \item{symbol}{the stock symbol}
@@ -13,10 +20,14 @@ chart(symbol, days_back = 63, tema_window = 21, adj = FALSE)
 
 \item{tema_window}{the TEMA moving window}
 
+\item{period}{"daily", "weekly", "monthly", "yearly" or "intraday", only for stocks. Coins return daily series only and this argument is ignored.}
+
 \item{adj}{whether to use adjusted close prices or not (boolean)}
+
+\item{envir}{environment to load stock data into}
 }
 \description{
-{Chart a candlestick series of a stock price history.
+{Chart a candlestick series of a stock price or cryptocurrency history.
 In blue/red is the long/short-term TEMA filter on either the close or adjusted close prices,
 and below is the volume.}
 }
