@@ -4,7 +4,7 @@
 \alias{poissonJumps}
 \title{Ad-hoc Poisson jump model}
 \usage{
-poissonJumps(symbol, jump_thresh = 0.03, side = "up")
+poissonJumps(symbol, jump_thresh = 0.03, side = "up", envir = parent.frame())
 }
 \arguments{
 \item{symbol}{ticker symbol; can be stock ticker or a cryptocurrency}
@@ -12,6 +12,8 @@ poissonJumps(symbol, jump_thresh = 0.03, side = "up")
 \item{jump_thresh}{threshold of jump size}
 
 \item{side}{direction of jump: up or down}
+
+\item{envir}{environment to load stock data into}
 }
 \value{
 numeric

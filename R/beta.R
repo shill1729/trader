@@ -13,7 +13,7 @@ beta2Hedge <- function(symbol, period = "daily", key = "premium")
 {
   symbols <- c("SPY", symbol, "VXX")
   # TODO: can we figure out a better way than commenting out this?
-  stocks <- ravapi::getStocks(symbols)
+  stocks <- ravapi::getAssets(symbols)
   arithmeticReturns <- stockReturns(stocks, "arithmetic")
   return(betaHedge2(arithmeticReturns))
 }
@@ -74,7 +74,7 @@ backtestBeta2Neutral <- function(asset, rolling, bankroll, rate, numDays, sample
   performanceMeasures <- list("mean", "sd", "min", "max", "greenDays")
   symbols <- c("SPY", asset, "VXX")
   # TODO: can we figure out a better way than commenting out this?
-  stocks <- getStocks(symbols)
+  stocks <- ravapi::getAssets(symbols)
   if(Sys.time() < paste(Sys.Date(), "16:00:00 EST"))
   {
     ww <- quantmod::getQuote(Symbols = symbols)[, "Last"]

@@ -12,10 +12,15 @@
 #' @export countJumps
 countJumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", side = "down", period = "weekly")
 {
+  jt <- jump_thresh
+  if(return_type == "log")
+  {
+    jt <- log(1+jump_thresh)
+  }
   x <- dailyReturns(prices)[, return_type]
-  indicator_up <- ifelse(x >= jump_thresh, 1, 0)
-  indicator_down <- ifelse(x <= -jump_thresh, 1, 0)
-  indicator_both <- ifelse(abs(x) >= jump_thresh, 1, 0)
+  indicator_up <- ifelse(x >= jt, 1, 0)
+  indicator_down <- ifelse(x <= -jt, 1, 0)
+  indicator_both <- ifelse(abs(x) >= jt, 1, 0)
   indicator <- eval(as.name(paste("indicator_", side, sep = "")))
   apply_period <- paste("apply.", period, sep = "")
   apply_period <- get(apply_period, envir = environment(xts))
@@ -29,6 +34,7 @@ countJumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", s
 #' @param symbol ticker symbol; can be stock ticker or a cryptocurrency
 #' @param jump_thresh threshold of jump size
 #' @param side direction of jump: up or down
+#' @param envir environment to load stock data into
 #'
 #' @description {An ad-hoc model fitting a Poisson distribution to the number of
 #' jumps excess a threshold per week.}
@@ -37,24 +43,31 @@ countJumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", s
 #' @importFrom stats Box.test acf dpois pexp
 #' @importFrom utils tail
 #' @export poissonJumps
-poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up")
+poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up", envir = parent.frame())
 {
-  adj_prices <- 0
-  if(!symbol %in% c("BTC", "DOGE", "ETH", "LTC"))
+  symbol_data <- paste(symbol, "_", "daily", "_data", sep = "")
+  if(exists(symbol_data))
   {
-    s <- getPriceTimeSeries(symbol, "daily")
-    adj_prices <- s$adj_close
+    print("Data already loaded")
+    adj_prices <- eval(as.symbol(symbol_data))
   } else
   {
-    s <- getCryptoCurrency(symbol)
-    adj_prices <- s$close
+    if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
+    {
+      dat <- ravapi::getAssets(symbol)
+      adj_prices <- dat$close
+    } else
+    {
+      dat <- ravapi::getAssets(symbol, "daily")
+      adj_prices <- dat$adj_close
+    }
   }
+  assign(x = symbol_data, value = dat, envir = envir)
 
-  jc <- countJumps(adj_prices, jump_thresh = jump_thresh, side = side, period = "weekly")
+
+  jc <- countJumps(adj_prices, jump_thresh = jump_thresh, return_type = "log", side = side, period = "weekly")
 
   # Testing for independence
-  # print(tseries::adf.test(x = jc))
-  # print(tseries::pp.test(x = jc))
   print(Box.test(x = jc))
   par(mfrow = c(1, 1))
   acf(as.numeric(jc), main = paste(symbol, "ACF"))

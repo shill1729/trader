@@ -29,10 +29,10 @@ chart <- function(symbol, days_back = 120, tema_window = 50, period = "daily", a
   {
     if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
     {
-      dat <- ravapi::getCoin(symbol)
+      dat <- ravapi::getAssets(symbol)
     } else
     {
-      dat <- ravapi::getStock(symbol, period)
+      dat <- ravapi::getAssets(symbol, period)
     }
   }
   assign(x = symbol_data, value = dat, envir = envir)
@@ -64,8 +64,8 @@ chart <- function(symbol, days_back = 120, tema_window = 50, period = "daily", a
   if (any(dat$flat_bar)) plt <- plt + geom_segment(data = dat[dat$flat_bar,], aes(x = .data$Date - .data$width / 2 * 0.9, y = close, yend = close, xend = .data$Date + .data$width / 2 * 0.9))
   # Adding tema filter
   plt <- plt +
-    geom_line(mapping = aes(x = .data$Date, y = .data$tema), data = dat, colour = "blue")+
-    geom_line(mapping = aes(x = .data$Date, y = .data$tema2), data = dat, colour = "red")+ylab("Price")
+    geom_line(mapping = aes(x = .data$Date, y = .data$tema), data = dat, colour = "red")+
+    geom_line(mapping = aes(x = .data$Date, y = .data$tema2), data = dat, colour = "blue")+ylab("Price")
   # Adding volume
   vo_plt <- ggplot(dat, aes(x = .data$Date))+
     geom_bar(stat = "identity", mapping = aes(x = .data$Date, y = .data$volume), fill = dat$colour)+

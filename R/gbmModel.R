@@ -24,10 +24,10 @@ gbm_model <- function(symbol, days_back = "full", period = "daily", adj = TRUE, 
   {
     if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
     {
-      dat <- ravapi::getCoin(symbol)
+      dat <- ravapi::getAssets(symbol)
     } else
     {
-      dat <- ravapi::getStock(symbol, period)
+      dat <- ravapi::getAssets(symbol, period)
     }
   }
   assign(x = symbol_data, value = dat, envir = envir)
