@@ -35,7 +35,12 @@ chart <- function(symbol, days_back = 120, tema_window = 50, period = "daily", a
       dat <- ravapi::getAssets(symbol, period, interval = "1min")
     }
   }
-  assign(x = symbol_data, value = dat, envir = envir)
+  # Don't store intraday data because we want to keep it real-time for crypto
+  if(period != "intraday")
+  {
+    assign(x = symbol_data, value = dat, envir = envir)
+  }
+
   if(days_back <= nrow(dat))
   {
     dat <- tail(dat, days_back)
