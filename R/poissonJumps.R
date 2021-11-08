@@ -49,6 +49,7 @@ countJumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", s
 #' @export poissonJumps
 poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up", envir = parent.frame())
 {
+  num_weekdays <- 5
   symbol_data <- paste(symbol, "_", "daily", "_data", sep = "")
   if(exists(symbol_data))
   {
@@ -56,21 +57,19 @@ poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up", envir = parent
     dat <- eval(as.symbol(symbol_data))
   } else
   {
-    if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
-    {
-      dat <- ravapi::getAssets(symbol)
-      adj_prices <- dat$close
-    } else
-    {
-      dat <- ravapi::getAssets(symbol, "daily")
-      adj_prices <- dat$adj_close
-    }
+    dat <- ravapi::getAssets(symbol)
+  }
+  if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
+  {
+    num_weekdays <- 7
+    adj_prices <- dat$close
+  } else
+  {
+    adj_prices <- dat$adj_close
   }
   assign(x = symbol_data, value = dat, envir = envir)
-
-
+  # Count number of jumps beyond threshold per week
   jc <- countJumps(adj_prices, jump_thresh = jump_thresh, return_type = "log", side = side, period = "weekly")
-
   # Testing for independence
   print(Box.test(x = jc))
   par(mfrow = c(1, 1))
@@ -83,7 +82,7 @@ poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up", envir = parent
   print("Number of samples in time-series")
   print(length(adj_prices))
   print("Time between jumps")
-  print(c(weeks = 1/z$poisFit$estimate, days = 5/z$poisFit$estimate))
+  print(c(weeks = 1/z$poisFit$estimate, days = num_weekdays/z$poisFit$estimate))
   print(paste("At least one jump", 1-dpois(x = 0, lambda = z$poisFit$estimate)))
 
   xtable::xtable(x = z$chiTest$table)
@@ -93,9 +92,15 @@ poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up", envir = parent
   jc_daily <- countJumps(adj_prices, jump_thresh = jump_thresh, side = side, period = "daily")
   last_jump_date <- as.Date(time(jc_daily[tail(which(jc_daily == 1), 1)]))
   date_yte(last_jump_date) # To initialize trading calendar
-  days_since_last <- bizdays::bizdays(from = last_jump_date, to = Sys.Date(), cal = "trading")
+  if(!symbol %in% c("BTC", "ETH", "ETC", "LTC", "DOGE"))
+  {
+    days_since_last <- bizdays::bizdays(from = last_jump_date, to = Sys.Date(), cal = "trading")
+  } else{
+    days_since_last <- as.numeric(difftime(Sys.Date(), last_jump_date, units = "d"))
+  }
+
 
   print(paste("Days since last jump:", days_since_last, "date:", last_jump_date))
-  print(paste("Chance = ", 1-pexp(days_since_last/5, rate = z$poisFit$estimate)))
-  return(z)
+  print(paste("Chance = ", 1-pexp(days_since_last/num_weekdays, rate = z$poisFit$estimate)))
+
 }

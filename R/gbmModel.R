@@ -15,7 +15,7 @@
 gbm_model <- function(symbol, days_back = "full", period = "daily", adj = TRUE, envir = parent.frame())
 {
   symbol_data <- paste(symbol, "_", period,"_data", sep = "")
-  training_input <- ifelse(adj, "adj_close", "close")
+
   if(exists(symbol_data))
   {
     print("Data already loaded")
@@ -24,6 +24,7 @@ gbm_model <- function(symbol, days_back = "full", period = "daily", adj = TRUE, 
   {
     if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
     {
+      adj <- FALSE
       dat <- ravapi::getAssets(symbol)
     } else
     {
@@ -41,7 +42,7 @@ gbm_model <- function(symbol, days_back = "full", period = "daily", adj = TRUE, 
   {
     stop("days_back must be set to 'full' if not using partial data")
   }
-
+  training_input <- ifelse(adj, "adj_close", "close")
   x <- dailyReturns(dat[, training_input])$log
   # Fit GBM model
   gbm <- findistr::fitGBM(x)
