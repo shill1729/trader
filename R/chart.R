@@ -29,10 +29,10 @@ chart <- function(symbol, days_back = 120, tema_window = 50, period = "daily", a
   {
     if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
     {
-      dat <- ravapi::getAssets(symbol)
+      dat <- ravapi::getAssets(symbol, period, interval = "1min")
     } else
     {
-      dat <- ravapi::getAssets(symbol, period)
+      dat <- ravapi::getAssets(symbol, period, interval = "1min")
     }
   }
   assign(x = symbol_data, value = dat, envir = envir)
