@@ -22,3 +22,8 @@ numeric
 {An ad-hoc model fitting a Poisson distribution to the number of
 jumps excess a threshold per week.}
 }
+\details{
+{ A chi-square test is run against the expected Poisson counts of jumps over the
+observed number of events. Log-returns are used so that this can be used in an ad-hoc way to assess
+fits for a Merton jump diffusion.}
+}

@@ -38,6 +38,10 @@ countJumps <- function(prices, jump_thresh = 0.01, return_type = "arithmetic", s
 #'
 #' @description {An ad-hoc model fitting a Poisson distribution to the number of
 #' jumps excess a threshold per week.}
+#' @details{ A chi-square test is run against the expected Poisson counts of jumps over the
+#' observed number of events. Log-returns are used so that this can be used in an ad-hoc way to assess
+#' fits for a Merton jump diffusion.}
+#'
 #' @return numeric
 #' @importFrom graphics par
 #' @importFrom stats Box.test acf dpois pexp
@@ -49,7 +53,7 @@ poissonJumps <- function(symbol, jump_thresh = 0.03, side = "up", envir = parent
   if(exists(symbol_data))
   {
     print("Data already loaded")
-    adj_prices <- eval(as.symbol(symbol_data))
+    dat <- eval(as.symbol(symbol_data))
   } else
   {
     if(symbol %in% c("DOGE", "BTC", "ETH", "LTC"))
