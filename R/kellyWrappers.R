@@ -53,7 +53,7 @@ getGBM <- function(symbol = NULL, prices = NULL, period = "daily", key = "premiu
     x <- 0
     if(!is.null(symbol) && is.null(prices))
     {
-      prices <- getPriceTimeSeries(symbol, period = period, key = key)
+      prices <- ravapi::getAssets(symbol, period = period, key = key)
       if(period == "daily")
       {
         prices <- prices$adj_close

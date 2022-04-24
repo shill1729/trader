@@ -34,6 +34,22 @@ computeBetas <- function(arithmeticReturns)
   return(betas)
 }
 
+#' Estimate alpha from OLS estimate of a linear regression against benchmark returns
+#'
+#' @param arithmeticReturns the multivariate time-series of returns. Assumes the first column is the benchmark, e.g. S&P 500
+#'
+#' @description {Compute historical estimates for the alphas of a sample of assets. These are
+#' based on a linear regression of the arithmetic returns of each asset against that of the benchmark index.}
+#' @return vector
+#' @export computeAlphas
+computeAlphas <- function(arithmeticReturns)
+{
+  # Assuming SPY is first
+  reg <- stats::lm(arithmeticReturns[, -1] ~ arithmeticReturns[, 1])
+  alphas <- reg$coefficients[1, ]
+  return(alphas)
+}
+
 #' Compute the beta-neutral portfolio for one market-correlated asset hedged with a inversely correlated asset.
 #'
 #' @param arithmeticReturns the multivariate time-series of returns. Assumes the first column is the benchmark, e.g. S&P 500
