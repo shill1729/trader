@@ -11,7 +11,7 @@ getYahooOptionChain(symbol, option_type = "calls", plotSurface = FALSE)
 
 \item{option_type}{"puts" or "calls"}
 
-\item{plotSurface}{boolean for plotting the 3D raw price-surface}
+\item{plotSurface}{boolean for plotting the 3D raw price-surface (Deprecated)}
 }
 \value{
 data.frame

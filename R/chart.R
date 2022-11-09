@@ -63,7 +63,7 @@ chart <- function(symbol, days_back = 120, tema_window = 50, period = "daily", a
                   xmax = .data$Date+.data$width*0.9*0.5,
                   ymin = pmin(open, close),
                   ymax = pmax(open, close), fill = .data$chg)) +
-    guides(fill = FALSE, colour = FALSE) +
+    guides(fill = "none", colour = "none") +
     scale_fill_manual(values = c("down" = "darkred", "up" = "darkgreen"))
   # Handle special case of drawing a flat bar where OHLC = Open:
   if (any(dat$flat_bar)) plt <- plt + geom_segment(data = dat[dat$flat_bar,], aes(x = .data$Date - .data$width / 2 * 0.9, y = close, yend = close, xend = .data$Date + .data$width / 2 * 0.9))

@@ -2,7 +2,7 @@
 #'
 #' @param symbol stock-ticker symbol to look up
 #' @param option_type "puts" or "calls"
-#' @param plotSurface boolean for plotting the 3D raw price-surface
+#' @param plotSurface boolean for plotting the 3D raw price-surface (Deprecated)
 #'
 #' @description {Download option chains for all available expiries of a given stock ticker,
 #' then merge them by common strike prices into one matrix/data.frame. This is essentially
@@ -33,7 +33,8 @@ getYahooOptionChain <- function(symbol, option_type = "calls", plotSurface = FAL
   colnames(marketData) <- c("Strike", as.character(expiries))
   if(plotSurface)
   {
-    plot3D::persp3D(z = as.matrix(marketData)[,-1], phi = 10, theta = 60)
+    print("Deprecated until I can find out 'tcltk DLL is linked to...' problem")
+    # plot3D::persp3D(z = as.matrix(marketData)[,-1], phi = 10, theta = 60)
   }
   return(marketData)
 }
