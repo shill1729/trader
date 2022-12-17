@@ -6,6 +6,7 @@
 \usage{
 gbm_model(
   symbol,
+  lambda = 0.06,
   days_back = "full",
   period = "daily",
   adj = TRUE,
@@ -14,6 +15,8 @@ gbm_model(
 }
 \arguments{
 \item{symbol}{stock symbol to analyze}
+
+\item{lambda}{smoothing parameter for EMA estimates in GBM model}
 
 \item{days_back}{number of data points back to look at}
 

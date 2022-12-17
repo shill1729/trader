@@ -1,6 +1,7 @@
 #' A comprehensive analysis under a GBM model
 #'
 #' @param symbol stock symbol to analyze
+#' @param lambda smoothing parameter for EMA estimates in GBM model
 #' @param days_back number of data points back to look at
 #' @param period resolution: daily or months
 #' @param adj whether to use adjusted close prices or not
@@ -12,7 +13,7 @@
 #' will come eventually to allow users to choose target wealth goals.}
 #' @return data.frame
 #' @export gbm_model
-gbm_model <- function(symbol, days_back = "full", period = "daily", adj = TRUE, envir = parent.frame())
+gbm_model <- function(symbol, lambda=0.06, days_back = "full", period = "daily", adj = TRUE, envir = parent.frame())
 {
   symbol_data <- paste(symbol, "_", period,"_data", sep = "")
 
@@ -45,7 +46,8 @@ gbm_model <- function(symbol, days_back = "full", period = "daily", adj = TRUE, 
   training_input <- ifelse(adj, "adj_close", "close")
   x <- dailyReturns(dat[, training_input])$log
   # Fit GBM model
-  gbm <- findistr::fitGBM(x)
+  gbm <- findistr::fit_ema_gbm(x, lambda)
+  gbm <- unlist(gbm)
   mu <- gbm[1]
   volat <- gbm[2]
   # Sharpe-Ratio
